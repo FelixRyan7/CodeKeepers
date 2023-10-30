@@ -1,9 +1,12 @@
 package codekeepers.vista;
 import codekeepers.controlador.Controlador;
 import codekeepers.modelo.Articulo;
-import codekeepers.modelo.ListaArticulos;
+import codekeepers.modelo.Cliente;
+import codekeepers.modelo.ClienteEstandard;
+import codekeepers.modelo.ClientePremium;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class GestionOS {
@@ -83,6 +86,7 @@ public class GestionOS {
                 System.out.println("Precio: " + articulo.getPrecio() + " €");
                 System.out.println("Gastos de envio: " + articulo.getGastoEnvio() + " €");
                 System.out.println("Tiempo de preparación: " + articulo.getTiempoPreparacion() + " minutos");
+                System.out.println("Stock disponible: " + articulo.getTiempoPreparacion() + " unidades");
             }
             System.out.println("\n\n");
 
@@ -103,7 +107,7 @@ public class GestionOS {
         String descripcion = teclado.nextLine();
         System.out.println("\n");
         while (descripcion.isEmpty()) {
-            System.out.println("Por favor, introduzca un nombre valido: ");
+            System.out.println("Por favor, introduzca una descripcion valido: ");
             descripcion = teclado.nextLine();
             System.out.println("\n");
 
@@ -112,7 +116,7 @@ public class GestionOS {
         String precio = teclado.nextLine().replace(',', '.');
         System.out.println("\n");
         while (precio.isEmpty() || !isValidFloat(precio)) {
-            System.out.println("Por favor, introduzca un nombre valido: ");
+            System.out.println("Por favor, introduzca un precio valido: ");
             precio = teclado.nextLine();
             System.out.println("\n");
         }
@@ -120,16 +124,24 @@ public class GestionOS {
         String gastosEnvio = teclado.nextLine().replace(',', '.');
         System.out.println("\n");
         while (gastosEnvio.isEmpty() || !isValidFloat(gastosEnvio)) {
-            System.out.println("Por favor, introduzca un nombre valido: ");
+            System.out.println("Por favor, introduzca un gasto de envío valido: ");
             gastosEnvio = teclado.nextLine();
             System.out.println("\n");
         }
         System.out.println("Tiempo de preparación: ");
         String tiempoPreparacion = teclado.nextLine();
         System.out.println("\n");
-        while (tiempoPreparacion.isEmpty()) {
-            System.out.println("Por favor, introduzca un nombre valido: ");
+        while (tiempoPreparacion.isEmpty() || !isValidInt(tiempoPreparacion)) {
+            System.out.println("Por favor, introduzca un tiempo de preparación valido: ");
             tiempoPreparacion = teclado.nextLine();
+            System.out.println("\n");
+        }
+        System.out.println("Stock: ");
+        String stock = teclado.nextLine();
+        System.out.println("\n");
+        while (stock.isEmpty() || !isValidInt(stock)) {
+            System.out.println("Por favor, introduzca un stock valido: ");
+            stock = teclado.nextLine();
             System.out.println("\n");
         }
 
@@ -138,13 +150,13 @@ public class GestionOS {
                 descripcion,
                 Float.parseFloat(precio),
                 Float.parseFloat(gastosEnvio),
-                Integer.parseInt(tiempoPreparacion)
+                Integer.parseInt(tiempoPreparacion),
+                Integer.parseInt(stock)
         );
 
         System.out.println("\nArticulo añadido correctamente!\n --------------\n\n");
 
     }
-
 
     public void gestionClientes() {
         boolean salir = false;
@@ -176,19 +188,116 @@ public class GestionOS {
     }
 
     public void listarClientes() {
-        System.out.println("LISTA DE CLIENTES");
+        System.out.println("\n\n---- LISTA DE CLIENTES ----\n\n");
+        List<Cliente> allClientes = controlador.showAllClientes();
+
+        if(allClientes.isEmpty()) {
+            System.out.println("No hay clientes en la lista\n\n");
+        } else {
+            for (Cliente cliente : allClientes) {
+                System.out.println("\n-----------");
+                System.out.println("Nombre: " + cliente.getNombre());
+                System.out.println("Correo electronico:" + cliente.getEmail());
+                System.out.println("NIF: " + cliente.getNif());
+                System.out.println("Domicilio: " + cliente.getDomicilio());
+                System.out.println("Tipo de cliente: " + cliente.tipoCliente());
+                if(Objects.equals(cliente.tipoCliente(), "Premium")) {
+                    System.out.println("Cuota anual: " + cliente.calcAnual() + " €");
+                    System.out.println("Descuento de envio: " + cliente.descuentoEnv() + " %");
+
+                }
+            }
+            System.out.println("\n\n");
+        }
     }
 
     public void listarClientesEstandar() {
-        System.out.println("LISTA DE CLIENTES ESTANDAR");
+        System.out.println("\n\n---- LISTA DE CLIENTES ESTANDAR ----\n\n");
+        List<ClienteEstandard> clienteEstandards = controlador.showClientesEstandar();
+
+        if(clienteEstandards.isEmpty()) {
+            System.out.println("No hay clientes estandar en la lista\n\n");
+        } else {
+            for (Cliente cliente : clienteEstandards) {
+                System.out.println("\n-----------");
+                System.out.println("Nombre: " + cliente.getNombre());
+                System.out.println("Correo electronico:" + cliente.getEmail());
+                System.out.println("NIF: " + cliente.getNif());
+                System.out.println("Domicilio: " + cliente.getDomicilio());
+            }
+            System.out.println("\n\n");
+        }
     }
 
     public void listarClientesPremium() {
-        System.out.println("LISTA DE CLIENTES PREMIUM");
+        System.out.println("\n\n---- LISTA DE CLIENTES PREMIUM ----\n\n");
+        List<ClientePremium> clientePremiums = controlador.showClientesPremium();
+
+        if(clientePremiums.isEmpty()) {
+            System.out.println("No hay clientes premium en la lista\n\n");
+        } else {
+            for (Cliente cliente : clientePremiums) {
+                System.out.println("\n-----------");
+                System.out.println("Nombre: " + cliente.getNombre());
+                System.out.println("Correo electronico:" + cliente.getEmail());
+                System.out.println("NIF: " + cliente.getNif());
+                System.out.println("Domicilio: " + cliente.getDomicilio());
+                System.out.println("Tipo de cliente: " + cliente.tipoCliente());
+                System.out.println("Cuota anual: " + cliente.calcAnual() + " €");
+                System.out.println("Descuento de envio: " + cliente.descuentoEnv() + " %");
+            }
+            System.out.println("\n\n");
+        }
     }
 
     public void addCliente() {
-        System.out.println("AÑADIR CLIENTE");
+        System.out.println("\n---- AÑADIR CLIENTE ----\n");
+        System.out.println("Nombre: ");
+        String nombre = teclado.nextLine();
+        System.out.println("\n");
+        while (nombre.isEmpty()) {
+            System.out.println("Por favor, introduzca un nombre valido: ");
+            nombre = teclado.nextLine();
+            System.out.println("\n");
+        }
+        System.out.println("Correo electronico: ");
+        String email = teclado.nextLine();
+        System.out.println("\n");
+        while (email.isEmpty()) {
+            System.out.println("Por favor, introduzca un correo electronico valido: ");
+            email = teclado.nextLine();
+            System.out.println("\n");
+        }
+        System.out.println("NIF: ");
+        String nif = teclado.nextLine();
+        System.out.println("\n");
+        while (nif.isEmpty()) {
+            System.out.println("Por favor, introduzca un NIF valido: ");
+            nif = teclado.nextLine();
+            System.out.println("\n");
+        }
+        System.out.println("Domicilio: ");
+        String domicilio = teclado.nextLine();
+        System.out.println("\n");
+        while (domicilio.isEmpty()) {
+            System.out.println("Por favor, introduzca un domicilio valido: ");
+            domicilio = teclado.nextLine();
+            System.out.println("\n");
+        }
+
+        System.out.println("Este será un cliente (1) Premium o (2) Estandar?");
+        System.out.println("Elija una opción: (1 o 2)");
+        String  tipoCliente = teclado.nextLine();
+        System.out.println("\n");
+        while (tipoCliente.isEmpty() || (!tipoCliente.equals("1") && !tipoCliente.equals("2"))) {
+            System.out.println("Por favor, introduzca una opción válido: ");
+            tipoCliente = teclado.nextLine();
+            System.out.println("\n");
+        }
+
+        controlador.addCliente(email, nombre, nif, domicilio, tipoCliente.equals("1"));
+        System.out.println("\nCliente añadido correctamente!\n --------------\n\n");
+
     }
 
     public void gestionPedidos() {
@@ -238,6 +347,15 @@ public class GestionOS {
     public static boolean isValidFloat(String s) {
         try {
             Float.parseFloat(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static boolean isValidInt(String s) {
+        try {
+            Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
             return false;

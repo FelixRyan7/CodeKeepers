@@ -2,25 +2,25 @@ package codekeepers.modelo;
 import java.util.*;
 
 public class Lista<T> {
-    protected HashMap<Integer, T> lista;
-    private int nextKey;
+    protected HashMap<Object, T> lista;
+    private Object lastKey;
 
     public Lista() {
-        lista = new HashMap<Integer, T>();
-        nextKey = 1;
+        lista = new HashMap<Object, T>();
+        lastKey = null;
     }
 
-    public int getNextKey() {
-        return nextKey;
+    public Object getLastKey() {
+        return lastKey;
     }
 
     public int getSize() {
         return lista.size();
     }
 
-    public void add(T t) {
-        lista.put(nextKey, t);
-        nextKey++;
+    public void add(Object key, T t) {
+        lista.put(key, t);
+        lastKey = key;
     }
 
     public void delete(int key) {
@@ -31,7 +31,7 @@ public class Lista<T> {
         }
     }
 
-    public T getAt(int key) {
+    public T get(int key) {
         if (!lista.containsKey(key)) {
             throw new IndexOutOfBoundsException("Clave no encontrada en la lista.");
         }
@@ -40,7 +40,7 @@ public class Lista<T> {
 
     public void clear() {
         lista.clear();
-        nextKey = 1;
+        lastKey = null;
     }
 
     public boolean isEmpty() {
@@ -51,7 +51,7 @@ public class Lista<T> {
         return new ArrayList<>(lista.values());
     }
 
-    public HashMap<Integer,T> getItems() {
+    public HashMap<Object,T> getItems() {
         return lista;
     }
 }

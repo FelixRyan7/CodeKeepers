@@ -108,7 +108,7 @@ public class Pedido {
                     "num_pedido=" + numPedido +
                     ", fecha_hora=" + fechaHora +
                     ", cliente=" + cliente.getNif() + cliente.getNombre() +
-                    ", articulo=" + articulo.getid() + articulo.getDescripcion() +
+                    ", articulo=" + articulo.getId() + articulo.getDescripcion() +
                     ", precio_articulo=" + articulo.getPrecio() +
                     ", cantidad_articulo=" + cantidadArticulo +
                     ", precio total del pedido=" + precioPedido +

@@ -1,40 +1,57 @@
 package codekeepers.modelo;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Lista<T> {
-    protected ArrayList<T> lista;
+    protected HashMap<Integer, T> lista;
+    private int nextKey;
+
     public Lista() {
-        lista = new ArrayList<>();
+        lista = new HashMap<Integer, T>();
+        nextKey = 1;
     }
+
+    public int getNextKey() {
+        return nextKey;
+    }
+
     public int getSize() {
         return lista.size();
     }
+
     public void add(T t) {
-        lista.add(t);
+        lista.put(nextKey, t);
+        nextKey++;
     }
-    public void borrar(T t) {
-        lista.remove(t);
-    }
-    public T getAt(int position) {
-        if (position < 0 || position >= lista.size()) {
-            throw new IndexOutOfBoundsException("Posición fuera de los límites.");
+
+    public void delete(int key) {
+        if (lista.containsKey(key)) {
+            lista.remove(key);
+        } else {
+            throw new IndexOutOfBoundsException("El elemento no se puede borrar porque la clave no se encuentra en la lista.");
         }
-        return lista.get(position);
     }
+
+    public T getAt(int key) {
+        if (!lista.containsKey(key)) {
+            throw new IndexOutOfBoundsException("Clave no encontrada en la lista.");
+        }
+        return lista.get(key);
+    }
+
     public void clear() {
         lista.clear();
+        nextKey = 1;
     }
+
     public boolean isEmpty() {
-        if (lista.isEmpty()) {
-            System.out.println("La lista está vacía");
-            return true;
-        } else {
-            System.out.println("La lista no está vacía");
-            return false;
-        }
+        return lista.isEmpty();
     }
-    public ArrayList<T> getArrayList() {
-        ArrayList<T> arrlist = new ArrayList<>(lista);
-        return arrlist;
+
+    public List<T> getList() {
+        return new ArrayList<>(lista.values());
+    }
+
+    public HashMap<Integer,T> getItems() {
+        return lista;
     }
 }

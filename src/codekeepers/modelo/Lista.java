@@ -42,6 +42,13 @@ public class Lista<T> {
         return lista.get(key);
     }
 
+    public void update(Object key, T item) {
+        if (!lista.containsKey(key)) {
+            throw new IndexOutOfBoundsException("Clave no encontrada en la lista.");
+        }
+        lista.put(key, item);
+    }
+
     public void clear() {
         lista.clear();
         lastKey = null;

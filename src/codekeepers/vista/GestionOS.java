@@ -16,11 +16,12 @@ public class GestionOS {
         boolean salir = false;
         char opcio;
         do {
+            String opciones = "(1,2,3 o 0): ";
             System.out.println("1. Gestión Articulos");
             System.out.println("2. Gestión Clientes");
             System.out.println("3. Gestión Pedidos");
             System.out.println("0. Salir");
-            opcio = pedirOpcion();
+            opcio = pedirOpcion(opciones);
             switch (opcio) {
                 case '1':
                     this.gestionArticulos();
@@ -39,9 +40,9 @@ public class GestionOS {
             }
         } while (!salir);
     }
-    char pedirOpcion() {
+    char pedirOpcion(String opciones) {
         String resp;
-        System.out.println("Elija una opción (1,2,3 o 0): ");
+        System.out.println("Elija una opción " + opciones);
                 resp = teclado.nextLine();
         if (resp.isEmpty()) {
             resp = " ";
@@ -53,10 +54,11 @@ public class GestionOS {
         boolean salir = false;
         char opcion;
         do {
+            String opciones = "(1,2 o 0): ";
             System.out.println("1. Listar Articulos");
             System.out.println("2. Añadir Articulo");
             System.out.println("0. Volver al menu principal");
-            opcion = pedirOpcion();
+            opcion = pedirOpcion(opciones);
             switch (opcion) {
                 case '1':
                     this.listarArticulos();
@@ -82,8 +84,8 @@ public class GestionOS {
                 System.out.println("Descripción:" + articulo.getDescripcion());
                 System.out.println("Precio: " + articulo.getPrecio() + " €");
                 System.out.println("Gastos de envio: " + articulo.getGastoEnvio() + " €");
-                System.out.println("Tiempo de preparación: " + articulo.getTiempoPreparacion() + " minutos");
-                System.out.println("Stock disponible: " + articulo.getTiempoPreparacion() + " unidades");
+                System.out.println("Tiempo de preparación: " + articulo.getTiempoPreparacion() + " minuto/s");
+                System.out.println("Stock disponible: " + articulo.getStock() + " unidad/es");
             }
             System.out.println("\n\n");
 
@@ -159,12 +161,13 @@ public class GestionOS {
         boolean salir = false;
         char opcion;
         do {
+            String opciones = "(1,2,3,4 o 0): ";
             System.out.println("1. Listar Clientes");
             System.out.println("2. Listar Clientes Estandar");
             System.out.println("3. Listar Clientes Premium");
             System.out.println("4. Añadir Cliente");
             System.out.println("0. Volver al menu principal");
-            opcion = pedirOpcion();
+            opcion = pedirOpcion(opciones);
             switch (opcion) {
                 case '1':
                     this.listarClientes();
@@ -247,7 +250,7 @@ public class GestionOS {
         }
     }
 
-    public void addCliente() {
+    public Cliente addCliente() {
         System.out.println("\n---- AÑADIR CLIENTE ----\n");
         System.out.println("Nombre: ");
         String nombre = teclado.nextLine();
@@ -292,32 +295,41 @@ public class GestionOS {
             System.out.println("\n");
         }
 
-        controlador.addCliente(email, nombre, nif, domicilio, tipoCliente.equals("1"));
+        Cliente cliente = controlador.addCliente(email, nombre, nif, domicilio, tipoCliente.equals("1"));
         System.out.println("\nCliente añadido correctamente!\n --------------\n\n");
-
+        return cliente;
     }
 
     public void gestionPedidos() {
         boolean salir = false;
         char opcion;
         do {
+            String opciones = "(1,2,3,4,5,6 o 0): ";
             System.out.println("1. Listar pedidos pendientes");
-            System.out.println("2. Listar pedidos enviados");
-            System.out.println("3. Hacer pedido");
-            System.out.println("4. Anular pedido");
+            System.out.println("2. Listar pedidos pendientes por cliente");
+            System.out.println("3. Listar pedidos enviados");
+            System.out.println("4. Listar pedidos enviados por cliente");
+            System.out.println("5. Hacer pedido");
+            System.out.println("6. Anular pedido");
             System.out.println("0. Volver al menu principal");
-            opcion = pedirOpcion();
+            opcion = pedirOpcion(opciones);
             switch (opcion) {
                 case '1':
                     this.listarPedidosPendientes();
                     break;
                 case '2':
-                    this.listarPedidosEnviados();
+                    this.listarPedidosPendientesCliente();
                     break;
                 case '3':
-                    this.addPedido();
+                    this.listarPedidosEnviados();
                     break;
                 case '4':
+                    this.listarPedidosEnviadosCliente();
+                    break;
+                case '5':
+                    this.addPedido();
+                    break;
+                case '6':
                     this.anularPedido();
                     break;
                 case '0':
@@ -331,7 +343,34 @@ public class GestionOS {
         List<Pedido> pedidosPendientes = controlador.showPedidosPendientes();
 
         if(pedidosPendientes.isEmpty()) {
-            System.out.println("No hay clientes estandar en la lista\n\n");
+            System.out.println("No hay pedidos pendientes en la lista\n\n");
+        } else {
+            for (Pedido pedido : pedidosPendientes) {
+                System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");
+                System.out.println("Cliente: " + pedido.getCliente().toString());
+                System.out.println("Articulo:" + pedido.getArticulo().toString());
+                System.out.println("Cantidad: " + pedido.getCantidadArticulo());
+                System.out.println("Precio: " + pedido.getPrecioPedido());
+                System.out.println("Fecha y hora: " + pedido.getFechaHora());
+            }
+            System.out.println("\n\n");
+        }
+    }
+    public void listarPedidosPendientesCliente() {
+        System.out.println("\n\n---- LISTA DE PEDIDOS PENDIENTES POR CLIENTE ----\n\n");
+        listarClientes();
+        System.out.println("Correo electronico del cliente: ");
+        String cliente = teclado.nextLine();
+        System.out.println("\n");
+        while (cliente.isEmpty()) {
+            System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
+            cliente = teclado.nextLine();
+            System.out.println("\n");
+        }
+        List<Pedido> pedidosPendientes = controlador.showPedidosPendientesCliente(cliente);
+
+        if(pedidosPendientes.isEmpty()) {
+            System.out.println("No hay pedidos pendientes de este cliente en la lista\n\n");
         } else {
             for (Pedido pedido : pedidosPendientes) {
                 System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");
@@ -349,7 +388,35 @@ public class GestionOS {
         List<Pedido> pedidosPendientes = controlador.showPedidosEnviados();
 
         if(pedidosPendientes.isEmpty()) {
-            System.out.println("No hay clientes estandar en la lista\n\n");
+            System.out.println("No hay pedidos enviados en la lista\n\n");
+        } else {
+            for (Pedido pedido : pedidosPendientes) {
+                System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");
+                System.out.println("Cliente: " + pedido.getCliente().toString());
+                System.out.println("Articulo:" + pedido.getArticulo().toString());
+                System.out.println("Cantidad: " + pedido.getCantidadArticulo());
+                System.out.println("Precio: " + pedido.getPrecioPedido());
+                System.out.println("Fecha y hora: " + pedido.getFechaHora());
+            }
+            System.out.println("\n\n");
+        }
+    }
+
+    public void listarPedidosEnviadosCliente() {
+        System.out.println("\n\n---- LISTA DE PEDIDOS ENVIADOS POR CLIENTE ----\n\n");
+        listarClientes();
+        System.out.println("Correo electronico del cliente: ");
+        String cliente = teclado.nextLine();
+        System.out.println("\n");
+        while (cliente.isEmpty()) {
+            System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
+            cliente = teclado.nextLine();
+            System.out.println("\n");
+        }
+
+        List<Pedido> pedidosPendientes = controlador.showPedidosEnviadosCliente(cliente);
+        if(pedidosPendientes.isEmpty()) {
+            System.out.println("No hay pedidos enviador de este cliente en la lista\n\n");
         } else {
             for (Pedido pedido : pedidosPendientes) {
                 System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");
@@ -365,15 +432,31 @@ public class GestionOS {
 
     public void addPedido() {
         System.out.println("\n---- HACER PEDIDO ----\n");
-        listarClientes();
-        System.out.println("Correo electronico del cliente: ");
-        String cliente = teclado.nextLine();
+        System.out.println("Ya es (1) cliente o (2) necesita registrarse?");
+        System.out.println("Elija una opción: (1 o 2)");
+        String esCliente = teclado.nextLine();
         System.out.println("\n");
-        while (cliente.isEmpty()) {
-            System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
-            cliente = teclado.nextLine();
+        while (esCliente.isEmpty() || (!esCliente.equals("1") && !esCliente.equals("2"))) {
+            System.out.println("Por favor, introduzca una opción válida: ");
+            esCliente = teclado.nextLine();
             System.out.println("\n");
         }
+        String cliente;
+        if(esCliente.equals("1")) {
+            listarClientes();
+            System.out.println("Correo electronico del cliente: ");
+            cliente = teclado.nextLine();
+            System.out.println("\n");
+            while (cliente.isEmpty()) {
+                System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
+                cliente = teclado.nextLine();
+                System.out.println("\n");
+            }
+        } else {
+            Cliente nuevoCliente = this.addCliente();
+            cliente = nuevoCliente.getEmail();
+        }
+
         listarArticulos();
         System.out.println("Numero del articulo: ");
         String articulo = teclado.nextLine();
@@ -393,7 +476,7 @@ public class GestionOS {
         }
 
         Pedido nuevoPedido = controlador.addPedido(cliente, Integer.parseInt(articulo), Integer.parseInt(cantidad));
-        System.out.println("\nPedido creado correctamente!\n--------------\n\n");
+        System.out.println("\nPedido creado correctamente!\n"+ nuevoPedido.toString() +"--------------\n\n");
     }
 
     public void anularPedido() {

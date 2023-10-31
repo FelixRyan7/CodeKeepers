@@ -77,8 +77,9 @@ public class Articulo {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public Articulo setStock(int stock) {
         this.stock = stock;
+        return this;
     }
 
     @Override

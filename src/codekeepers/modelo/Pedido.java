@@ -1,93 +1,91 @@
 package codekeepers.modelo;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 
 public class Pedido {
 
 
-        private int numPedido;
+    private int numPedido;
 
-        private Cliente cliente;
+    private Cliente cliente;
 
-        private Articulo articulo;
+    private Articulo articulo;
 
-        private LocalDateTime fechaHora;
+    private LocalDateTime fechaHora;
 
-        private int cantidadArticulo;
+    private int cantidadArticulo;
 
-        private float precioPedido;
+    private float precioPedido;
 
-    private List<Articulo> articulos;
 
-        public Pedido(int numPedido, Cliente cliente, Articulo articulo, int cantidadArticulo, float precioPedido) {
-            this.numPedido = numPedido;
-            this.cliente = cliente;
-            this.articulo = articulo;
-            this.cantidadArticulo = cantidadArticulo;
-            this.precioPedido = precioPedido;
-            this.fechaHora = LocalDateTime.now();
-        }
+    public Pedido(int numPedido, Cliente cliente, Articulo articulo, int cantidadArticulo, float precioPedido) {
+        this.numPedido = numPedido;
+        this.cliente = cliente;
+        this.articulo = articulo;
+        this.cantidadArticulo = cantidadArticulo;
+        this.precioPedido = precioPedido;
+        this.fechaHora = LocalDateTime.now();
+    }
 
-        public int getNumPedido() {
-            return numPedido;
-        }
+    public int getNumPedido() {
+        return numPedido;
+    }
 
-        public void setNumPedido(int numPedido) {
-            this.numPedido = numPedido;
-        }
+    public void setNumPedido(int numPedido) {
+        this.numPedido = numPedido;
+    }
 
-        public Cliente getCliente() {
-            return cliente;
-        }
+    public Cliente getCliente() {
+        return cliente;
+    }
 
-        public void setCliente(Cliente cliente) {
-            this.cliente = cliente;
-        }
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
-        public Articulo getArticulo() {
-            return articulo;
-        }
+    public Articulo getArticulo() {
+        return articulo;
+    }
 
-        public void setArticulo(Articulo articulo) {
-            this.articulo = articulo;
-        }
+    public void setArticulo(Articulo articulo) {
+        this.articulo = articulo;
+    }
 
-        public LocalDateTime getFechaHora() {
-            return fechaHora;
-        }
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
+    }
 
-        public void setFechaHora(LocalDateTime fechaHora) {
-            this.fechaHora = fechaHora;
-        }
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
+    }
 
-        public int getCantidadArticulo() {
-            return cantidadArticulo;
-        }
+    public int getCantidadArticulo() {
+        return cantidadArticulo;
+    }
 
-        public void setCantidadArticulo(int cantidadArticulo) {
-            this.cantidadArticulo = cantidadArticulo;
-        }
+    public void setCantidadArticulo(int cantidadArticulo) {
+        this.cantidadArticulo = cantidadArticulo;
+    }
 
-        public float getPrecioPedido() {
-            return precioPedido;
-        }
+    public float getPrecioPedido() {
+        return precioPedido;
+    }
 
-        public void setPrecioPedido(float precioPedido) {
-            this.precioPedido = precioPedido;
-        }
+    public void setPrecioPedido(float precioPedido) {
+        this.precioPedido = precioPedido;
+    }
 
     public boolean pedidoEnviado(){
-            boolean pedido_Enviado = false;
-            return pedido_Enviado;
+        int tiempoPreparacion = articulo.getTiempoPreparacion();
+        long diferenciaMinutos = ChronoUnit.MINUTES.between(fechaHora, LocalDateTime.now());
+
+        return diferenciaMinutos >= tiempoPreparacion;
     }
 
     public float precioEnvio() {
-        float costoEnvioTotal = 0.0f;
-
-        for (Articulo articulo : articulos) {
-            costoEnvioTotal += articulo.getGastoEnvio();
-        }
+        float costoEnvioTotal = articulo.getGastoEnvio();
 
         // Si el cliente no tiene descuento en envíos, simplemente retornamos el costo total.
         if (cliente instanceof ClienteEstandard) {
@@ -96,8 +94,8 @@ public class Pedido {
 
         // Si el cliente es premium, aplicamos el descuento del 20%.
         if (cliente instanceof ClientePremium) {
-            float descuento = cliente.descuentoEnv() / 100.0f; // 20% como decimal
-            return costoEnvioTotal * (1 - descuento);
+            float descuento = (cliente.descuentoEnv() * costoEnvioTotal) / 100;
+            return costoEnvioTotal - descuento;
         }
         return costoEnvioTotal;
     }
@@ -113,7 +111,7 @@ public class Pedido {
                     ", cantidad_articulo=" + cantidadArticulo +
                     ", precio total del pedido=" + precioPedido +
                     ", Coste de envio=" + precioEnvio() +
-                    ", precio total del pedido + envio=" + precioEnvio() + precioPedido +
+                    ", precio total del pedido + envio=" + (precioEnvio() + precioPedido) +
                     ", Pedido enviado=" + pedidoEnviado() +
                     '}';
         }

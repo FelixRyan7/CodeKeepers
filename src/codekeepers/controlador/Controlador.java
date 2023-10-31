@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import codekeepers.modelo.*;
 
@@ -20,7 +21,7 @@ public class Controlador {
         return listaArticulos.getList();
     }
 
-    public void addNewArticulo(String nombre, String descripcion, float precio, float gastoEnvio,int tiempoPreparacion, int stock) {
+    public Articulo addNewArticulo(String nombre, String descripcion, float precio, float gastoEnvio,int tiempoPreparacion, int stock) {
         ListaArticulos listaArticulos = datos.getListaArticulos();
         Object id = listaArticulos.getLastKey();
         if(id == null) {
@@ -39,15 +40,17 @@ public class Controlador {
                 );
         listaArticulos.add(id, articuloNuevo);
         datos.setListaArticulos(listaArticulos);
+        return articuloNuevo;
     }
 
-    public void addCliente(String email, String nombre, String nif, String domicilio, boolean esPremium) {
+    public Cliente addCliente(String email, String nombre, String nif, String domicilio, boolean esPremium) {
         ListaClientes listaClientes = datos.getListaClientes();
         Cliente clienteNuevo = esPremium ?
                 new ClientePremium(email, nombre, nif, domicilio) :
                 new ClienteEstandard(email, nombre, nif, domicilio);
         listaClientes.add(email, clienteNuevo);
         datos.setListaClientes(listaClientes);
+        return clienteNuevo;
     }
 
     public List<Cliente> showAllClientes() {
@@ -88,11 +91,25 @@ public class Controlador {
             LocalDateTime fechaHoraPedido = pedido.getFechaHora();
             int tiempoPreparacion = pedido.getArticulo().getTiempoPreparacion();
             long diferenciaMinutos = ChronoUnit.MINUTES.between(fechaHoraPedido, fechaHoraActual);
-
             if(diferenciaMinutos < tiempoPreparacion) {
                 pedidosPendientes.add(pedido);
             }
+        }
+        return pedidosPendientes;
+    }
 
+    public List<Pedido> showPedidosPendientesCliente(String cliente) {
+        ListaPedidos listaPedidos = this.datos.getListaPedidos();
+        List<Pedido> pedidosPendientes = new ArrayList<>();
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+        for (Pedido pedido : listaPedidos.getList()) {
+            LocalDateTime fechaHoraPedido = pedido.getFechaHora();
+            int tiempoPreparacion = pedido.getArticulo().getTiempoPreparacion();
+            long diferenciaMinutos = ChronoUnit.MINUTES.between(fechaHoraPedido, fechaHoraActual);
+            if(diferenciaMinutos < tiempoPreparacion && Objects.equals(pedido.getCliente().getEmail(), cliente)) {
+                pedidosPendientes.add(pedido);
+            }
         }
         return pedidosPendientes;
     }
@@ -115,8 +132,27 @@ public class Controlador {
         return pedidosEnviados;
     }
 
+    public List<Pedido> showPedidosEnviadosCliente(String cliente) {
+        ListaPedidos listaPedidos = this.datos.getListaPedidos();
+        List<Pedido> pedidosEnviados = new ArrayList<>();
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+        for (Pedido pedido : listaPedidos.getList()) {
+            LocalDateTime fechaHoraPedido = pedido.getFechaHora();
+            int tiempoPreparacion = pedido.getArticulo().getTiempoPreparacion();
+            long diferenciaMinutos = ChronoUnit.MINUTES.between(fechaHoraPedido, fechaHoraActual);
+
+            if(diferenciaMinutos >= tiempoPreparacion && Objects.equals(pedido.getCliente().getEmail(), cliente)) {
+                pedidosEnviados.add(pedido);
+            }
+
+        }
+        return pedidosEnviados;
+    }
+
     public Pedido addPedido(String emailCliente, int numeroArticulo, int cantidad) {
         ListaPedidos listaPedidos = datos.getListaPedidos();
+        ListaArticulos listaArticulos = datos.getListaArticulos();
         Cliente cliente = datos.getListaClientes().get(emailCliente);
         Articulo articulo = datos.getListaArticulos().get(numeroArticulo);
         Object id = listaPedidos.getLastKey();
@@ -125,19 +161,18 @@ public class Controlador {
         } else {
             id = Integer.parseInt(id.toString()) + 1 ;
         }
-        float precioArticulo = articulo.getPrecio();
-        float gastoEnvio = articulo.getGastoEnvio();
-        float precioTodosArticulos = precioArticulo * cantidad;
-        float precioFinal = precioTodosArticulos + gastoEnvio;
+        float precioTodosArticulos = articulo.getPrecio() * cantidad;
         Pedido pedidoNuevo = new Pedido(
                 Integer.parseInt(id.toString()),
                 cliente,
                 articulo,
                 cantidad,
-                precioFinal
+                precioTodosArticulos
         );
         listaPedidos.add(id, pedidoNuevo);
         datos.setListaPedidos(listaPedidos);
+        listaArticulos.update(numeroArticulo, articulo.setStock(articulo.getStock() - cantidad));
+        datos.setListaArticulos(listaArticulos);
         return pedidoNuevo;
     }
 
@@ -148,11 +183,17 @@ public class Controlador {
     }
 
     public void initData() {
-        addCliente("luffy@mail.com", "Luffy", "222222222P", "C/ Rubi 22", true);
-        addCliente("zoro@mail.com", "Zoro", "333333333K", "C/ Diamant 22", false);
-        addCliente("robin@mail.com", "Robin", "444444444M", "C/ Or 22", true);
-        addNewArticulo("Mesa", "Mesa de mandera", 22.89f, 3.55f, 1, 100);
-        addNewArticulo("Silla", "Silla de mandera", 16.89f, 3.35f, 10, 400);
-        addNewArticulo("Estanteria", "Estanteria de mandera", 12.89f, 2.75f, 5, 300);
+        Cliente cliente1 = addCliente("luffy@mail.com", "Luffy", "222222222P", "C/ Rubi 22", true);
+        Cliente cliente2 = addCliente("zoro@mail.com", "Zoro", "333333333K", "C/ Diamant 22", false);
+        Cliente cliente3 = addCliente("robin@mail.com", "Robin", "444444444M", "C/ Or 22", true);
+        Articulo articulo1 = addNewArticulo("Mesa", "Mesa de mandera", 22.89f, 3.55f, 1, 100);
+        Articulo articulo2 = addNewArticulo("Silla", "Silla de mandera", 16.89f, 3.35f, 10, 400);
+        Articulo articulo3 = addNewArticulo("Estanteria", "Estanteria de mandera", 12.89f, 2.75f, 5, 300);
+        addPedido("luffy@mail.com", 1, 10);
+        addPedido("luffy@mail.com", 2, 40);
+        addPedido("luffy@mail.com", 3, 4);
+        addPedido("robin@mail.com", 1, 40);
+        addPedido("robin@mail.com", 2, 12);
+        addPedido("zoro@mail.com", 3, 10);
     }
 }

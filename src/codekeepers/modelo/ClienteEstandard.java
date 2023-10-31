@@ -1,6 +1,6 @@
 package codekeepers.modelo;
 
-public abstract class ClienteEstandard extends Cliente{
+public class ClienteEstandard extends Cliente{
 
     public ClienteEstandard(String email, String nombre, String nif, String domicilio) {
         super(email, nombre, nif, domicilio);
@@ -27,8 +27,8 @@ public abstract class ClienteEstandard extends Cliente{
     public String toString() {
         return "Tipo de Cliente: " + tipoCliente() + "\n" +
                 super.toString() +
-                "Cuota anual: " + calcAnual() + "\n" +
-                "Descuento de envio: " + descuentoEnv() + "\n"
+                "\nCuota anual: " + calcAnual() + "€\n" +
+                "Descuento de envio: " + descuentoEnv() + "€\n"
                 ;
     }
 }

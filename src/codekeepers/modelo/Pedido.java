@@ -1,10 +1,11 @@
 package codekeepers.modelo;
 import java.time.LocalDateTime;
 import java.util.List;
+import codekeepers.vista.*;
+import java.time.temporal.ChronoUnit;
 
 
 public class Pedido {
-
 
         private int numPedido;
 
@@ -18,16 +19,20 @@ public class Pedido {
 
         private float precioPedido;
 
-    private List<Articulo> articulos;
 
-        public Pedido(int numPedido, Cliente cliente, Articulo articulo, int cantidadArticulo, float precioPedido) {
-            this.numPedido = numPedido;
-            this.cliente = cliente;
-            this.articulo = articulo;
-            this.cantidadArticulo = cantidadArticulo;
-            this.precioPedido = precioPedido;
-            this.fechaHora = LocalDateTime.now();
-        }
+
+    public Pedido(){
+
+    }
+
+    public Pedido(int numPedido, Cliente cliente, Articulo articulo, int cantidadArticulo, float precioPedido, LocalDateTime fechaHora) {
+        this.numPedido = numPedido;
+        this.cliente = cliente;
+        this.articulo = articulo;
+        this.cantidadArticulo = cantidadArticulo;
+        this.precioPedido = articulo.getPrecio() * cantidadArticulo;
+        this.fechaHora = fechaHora; // Asigna la fecha y hora proporcionada
+    }
 
         public int getNumPedido() {
             return numPedido;
@@ -78,16 +83,28 @@ public class Pedido {
         }
 
     public boolean pedidoEnviado(){
-            boolean pedido_Enviado = false;
-            return pedido_Enviado;
+        LocalDateTime fechaHoraPedido = getFechaHora();
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+        // Calcula el tiempo transcurrido en minutos desde el pedido.
+        long minutosTranscurridos = ChronoUnit.MINUTES.between(fechaHoraPedido, fechaHoraActual);
+
+        if (minutosTranscurridos <= articulo.getTiempo_preparacion()) {
+            // El pedido puede ser eliminado, ya que no ha sido enviado.
+            // Agregar aquí la lógica para eliminar el pedido.
+
+            return false;
+        } else {
+            // El pedido no puede ser eliminado, ya que ha superado el tiempo de preparación para el envío.
+            // Puedes mostrar un mensaje de error o realizar cualquier otra acción necesaria.
+            return true;
+        }
     }
 
     public float precioEnvio() {
-        float costoEnvioTotal = 0.0f;
 
-        for (Articulo articulo : articulos) {
-            costoEnvioTotal += articulo.getGastoEnvio();
-        }
+
+        float costoEnvioTotal = this.articulo.getGastoEnvio();
 
         // Si el cliente no tiene descuento en envíos, simplemente retornamos el costo total.
         if (cliente instanceof ClienteEstandard) {
@@ -104,16 +121,18 @@ public class Pedido {
 
         @Override
         public String toString() {
+
             return "Pedido{" +
                     "num_pedido=" + numPedido +
                     ", fecha_hora=" + fechaHora +
-                    ", cliente=" + cliente.getNif() + cliente.getNombre() +
-                    ", articulo=" + articulo.getid() + articulo.getDescripcion() +
-                    ", precio_articulo=" + articulo.getPrecio() +
+                    ", cliente= ( NIF: " + cliente.getNif() + " / Nombre: "+ cliente.getNombre() + ")" +
+                    ", articulo= (Id articulo: " + articulo.getid() + " / Descripcion: "+ articulo.getDescripcion() + ")" +
+                    ", precio_articulo=" + articulo.getPrecio() + "€" +
                     ", cantidad_articulo=" + cantidadArticulo +
-                    ", precio total del pedido=" + precioPedido +
-                    ", Coste de envio=" + precioEnvio() +
-                    ", precio total del pedido + envio=" + precioEnvio() + precioPedido +
+                    ", precio total del pedido=" + articulo.getPrecio() * cantidadArticulo + "€" +
+                    ", Coste de envio=" + articulo.getGastoEnvio() + "€" +
+                    ", Coste de envio por ser cliente " + cliente.tipoCliente() + ": " + precioEnvio() + "€" +
+                    ", precio total del pedido + envio=" + precioPedido + "€" +
                     ", Pedido enviado=" + pedidoEnviado() +
                     '}';
         }

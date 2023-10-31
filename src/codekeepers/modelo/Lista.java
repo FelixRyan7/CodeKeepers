@@ -1,11 +1,15 @@
 package codekeepers.modelo;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Lista<T> {
     protected ArrayList<T> lista;
     public Lista() {
         lista = new ArrayList<>();
+
     }
+
     public int getSize() {
         return lista.size();
     }

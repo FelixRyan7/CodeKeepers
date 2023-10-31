@@ -1,9 +1,6 @@
 package codekeepers.vista;
 import codekeepers.controlador.Controlador;
-import codekeepers.modelo.Articulo;
-import codekeepers.modelo.Cliente;
-import codekeepers.modelo.ClienteEstandard;
-import codekeepers.modelo.ClientePremium;
+import codekeepers.modelo.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -330,18 +327,93 @@ public class GestionOS {
     }
 
     public void listarPedidosPendientes() {
-        System.out.println("LISTA DE PEDIDOS PENDIENTES");
+        System.out.println("\n\n---- LISTA DE PEDIDOS PENDIENTES ----\n\n");
+        List<Pedido> pedidosPendientes = controlador.showPedidosPendientes();
+
+        if(pedidosPendientes.isEmpty()) {
+            System.out.println("No hay clientes estandar en la lista\n\n");
+        } else {
+            for (Pedido pedido : pedidosPendientes) {
+                System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");
+                System.out.println("Cliente: " + pedido.getCliente().toString());
+                System.out.println("Articulo:" + pedido.getArticulo().toString());
+                System.out.println("Cantidad: " + pedido.getCantidadArticulo());
+                System.out.println("Precio: " + pedido.getPrecioPedido());
+                System.out.println("Fecha y hora: " + pedido.getFechaHora());
+            }
+            System.out.println("\n\n");
+        }
     }
     public void listarPedidosEnviados() {
-        System.out.println("LISTA DE PEDIDOS ENVIADOS");
+        System.out.println("\n\n---- LISTA DE PEDIDOS ENVIADOS ----\n\n");
+        List<Pedido> pedidosPendientes = controlador.showPedidosEnviados();
+
+        if(pedidosPendientes.isEmpty()) {
+            System.out.println("No hay clientes estandar en la lista\n\n");
+        } else {
+            for (Pedido pedido : pedidosPendientes) {
+                System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");
+                System.out.println("Cliente: " + pedido.getCliente().toString());
+                System.out.println("Articulo:" + pedido.getArticulo().toString());
+                System.out.println("Cantidad: " + pedido.getCantidadArticulo());
+                System.out.println("Precio: " + pedido.getPrecioPedido());
+                System.out.println("Fecha y hora: " + pedido.getFechaHora());
+            }
+            System.out.println("\n\n");
+        }
     }
 
     public void addPedido() {
-        System.out.println("HACER PEDIDO");
+        System.out.println("\n---- HACER PEDIDO ----\n");
+        listarClientes();
+        System.out.println("Correo electronico del cliente: ");
+        String cliente = teclado.nextLine();
+        System.out.println("\n");
+        while (cliente.isEmpty()) {
+            System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
+            cliente = teclado.nextLine();
+            System.out.println("\n");
+        }
+        listarArticulos();
+        System.out.println("Numero del articulo: ");
+        String articulo = teclado.nextLine();
+        System.out.println("\n");
+        while (articulo.isEmpty()) {
+            System.out.println("Por favor, introduzca un numero de articulo valido: ");
+            articulo = teclado.nextLine();
+            System.out.println("\n");
+        }
+        System.out.println("Cantidad: ");
+        String cantidad = teclado.nextLine();
+        System.out.println("\n");
+        while (cantidad.isEmpty()) {
+            System.out.println("Por favor, introduzca una cantidad valida: ");
+            cantidad = teclado.nextLine();
+            System.out.println("\n");
+        }
+
+        Pedido nuevoPedido = controlador.addPedido(cliente, Integer.parseInt(articulo), Integer.parseInt(cantidad));
+        System.out.println("\nPedido creado correctamente!\n--------------\n\n");
     }
 
     public void anularPedido() {
-        System.out.println("ANULAR PEDIDO");
+        System.out.println("\n---- ANULAR PEDIDO ----\n");
+        listarPedidosPendientes();
+        System.out.println("\nEsta es la lista de pedidos que pueden ser cancelados\n");
+
+        System.out.println("Introduzca el numero de pedido que desea cancelar: ");
+        String pedido = teclado.nextLine();
+        System.out.println("\n");
+        while (pedido.isEmpty()) {
+            System.out.println("Por favor, introduzca un numero de pedido valido: ");
+            pedido = teclado.nextLine();
+            System.out.println("\n");
+        }
+
+        controlador.deletePedido(Integer.parseInt(pedido));
+
+        System.out.println("\nPedido anulador correctamente!\n--------------\n\n");
+
     }
 
     public static boolean isValidFloat(String s) {

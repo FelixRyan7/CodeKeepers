@@ -1,5 +1,7 @@
 package codekeepers.controlador;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ public class Controlador {
     private Datos datos;
     public Controlador() {
         datos = new Datos ();
+        this.initData();
     }
 
     public List<Articulo> showAllArticulos() {
@@ -74,5 +77,82 @@ public class Controlador {
             }
         }
         return clientesPremium;
+    }
+
+    public List<Pedido> showPedidosPendientes() {
+        ListaPedidos listaPedidos = this.datos.getListaPedidos();
+        List<Pedido> pedidosPendientes = new ArrayList<>();
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+        for (Pedido pedido : listaPedidos.getList()) {
+            LocalDateTime fechaHoraPedido = pedido.getFechaHora();
+            int tiempoPreparacion = pedido.getArticulo().getTiempoPreparacion();
+            long diferenciaMinutos = ChronoUnit.MINUTES.between(fechaHoraPedido, fechaHoraActual);
+
+            if(diferenciaMinutos < tiempoPreparacion) {
+                pedidosPendientes.add(pedido);
+            }
+
+        }
+        return pedidosPendientes;
+    }
+
+    public List<Pedido> showPedidosEnviados() {
+        ListaPedidos listaPedidos = this.datos.getListaPedidos();
+        List<Pedido> pedidosEnviados = new ArrayList<>();
+        LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+        for (Pedido pedido : listaPedidos.getList()) {
+            LocalDateTime fechaHoraPedido = pedido.getFechaHora();
+            int tiempoPreparacion = pedido.getArticulo().getTiempoPreparacion();
+            long diferenciaMinutos = ChronoUnit.MINUTES.between(fechaHoraPedido, fechaHoraActual);
+
+            if(diferenciaMinutos >= tiempoPreparacion) {
+                pedidosEnviados.add(pedido);
+            }
+
+        }
+        return pedidosEnviados;
+    }
+
+    public Pedido addPedido(String emailCliente, int numeroArticulo, int cantidad) {
+        ListaPedidos listaPedidos = datos.getListaPedidos();
+        Cliente cliente = datos.getListaClientes().get(emailCliente);
+        Articulo articulo = datos.getListaArticulos().get(numeroArticulo);
+        Object id = listaPedidos.getLastKey();
+        if(id == null) {
+            id = 1;
+        } else {
+            id = Integer.parseInt(id.toString()) + 1 ;
+        }
+        float precioArticulo = articulo.getPrecio();
+        float gastoEnvio = articulo.getGastoEnvio();
+        float precioTodosArticulos = precioArticulo * cantidad;
+        float precioFinal = precioTodosArticulos + gastoEnvio;
+        Pedido pedidoNuevo = new Pedido(
+                Integer.parseInt(id.toString()),
+                cliente,
+                articulo,
+                cantidad,
+                precioFinal
+        );
+        listaPedidos.add(id, pedidoNuevo);
+        datos.setListaPedidos(listaPedidos);
+        return pedidoNuevo;
+    }
+
+    public void deletePedido(int numeroPedido) {
+        ListaPedidos listaPedidos = datos.getListaPedidos();
+        listaPedidos.delete(numeroPedido);
+        datos.setListaPedidos(listaPedidos);
+    }
+
+    public void initData() {
+        addCliente("luffy@mail.com", "Luffy", "222222222P", "C/ Rubi 22", true);
+        addCliente("zoro@mail.com", "Zoro", "333333333K", "C/ Diamant 22", false);
+        addCliente("robin@mail.com", "Robin", "444444444M", "C/ Or 22", true);
+        addNewArticulo("Mesa", "Mesa de mandera", 22.89f, 3.55f, 1, 100);
+        addNewArticulo("Silla", "Silla de mandera", 16.89f, 3.35f, 10, 400);
+        addNewArticulo("Estanteria", "Estanteria de mandera", 12.89f, 2.75f, 5, 300);
     }
 }

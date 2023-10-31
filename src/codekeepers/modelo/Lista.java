@@ -23,7 +23,7 @@ public class Lista<T> {
         lastKey = key;
     }
 
-    public void delete(int key) {
+    public void delete(Object key) {
         if (lista.containsKey(key)) {
             lista.remove(key);
         } else {
@@ -31,7 +31,11 @@ public class Lista<T> {
         }
     }
 
-    public T get(int key) {
+    public boolean exists(Object key) {
+        return lista.containsKey(key);
+    }
+
+    public T get(Object key) {
         if (!lista.containsKey(key)) {
             throw new IndexOutOfBoundsException("Clave no encontrada en la lista.");
         }

@@ -18,7 +18,6 @@ public class Pedido {
 
         private float precioPedido;
 
-    private List<Articulo> articulos;
 
         public Pedido(int numPedido, Cliente cliente, Articulo articulo, int cantidadArticulo, float precioPedido) {
             this.numPedido = numPedido;
@@ -79,15 +78,15 @@ public class Pedido {
 
     public boolean pedidoEnviado(){
             boolean pedido_Enviado = false;
+            //Si la fecha del pedido más los minutos de preaparación del articulo es menor al tiempo actual este será un pedido enviado
+            pedido_Enviado = this.fechaHora.plusMinutes(this.articulo.getTiempo_preparacion()).isBefore(LocalDateTime.now());
             return pedido_Enviado;
     }
 
     public float precioEnvio() {
         float costoEnvioTotal = 0.0f;
 
-        for (Articulo articulo : articulos) {
-            costoEnvioTotal += articulo.getGastoEnvio();
-        }
+        costoEnvioTotal = this.articulo.getPrecio()*this.cantidadArticulo;
 
         // Si el cliente no tiene descuento en envíos, simplemente retornamos el costo total.
         if (cliente instanceof ClienteEstandard) {

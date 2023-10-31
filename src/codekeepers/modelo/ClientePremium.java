@@ -2,24 +2,31 @@ package codekeepers.modelo;
 
 public abstract class ClientePremium extends Cliente{
 
+    private float cuota;
+    private float descuento;
+    private boolean premium;
+
     public ClientePremium(String email, String nombre, String nif, String domicilio) {
         super(email, nombre, nif, domicilio);
+        this.descuento = 30.0f;
+        this.cuota = 20.0f;
+        this.premium = true;
     }
 
 
     @Override
     public String tipoCliente() {
-        return "Premium";
+        return this.premium?"Premium":"Estandard";
     }
 
     @Override
     public float calcAnual() {
-        return 30.0f;
+        return this.cuota;
     }
 
     @Override
     public float descuentoEnv() {
-        return 20.0f;
+        return this.descuento;
     }
 
     @Override

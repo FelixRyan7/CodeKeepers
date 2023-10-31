@@ -1,7 +1,7 @@
 package codekeepers.modelo;
 
 public class Articulo {
-    private String id;
+    private int id;
 
     private String nombre;
 
@@ -13,7 +13,7 @@ public class Articulo {
 
     private int tiempoPreparacion;
 
-    public Articulo(String id, String nombre, String descripcion, float precio, float gastoEnvio, int tiempoPreparacion) {
+    public Articulo(int id, String nombre, String descripcion, float precio, float gastoEnvio, int tiempoPreparacion) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -22,11 +22,11 @@ public class Articulo {
         this.tiempoPreparacion = tiempoPreparacion;
     }
 
-    public String getid() {
+    public int getid() {
         return id;
     }
 
-    public void setid(String id) {
+    public void setid(int id) {
         this.id = id;
     }
 
@@ -63,7 +63,7 @@ public class Articulo {
     }
 
     public int getTiempo_preparacion() {
-        return tiempoPreparacion;
+        return this.tiempoPreparacion;
     }
 
     public void setTiempo_preparacion(int tiempo_preparacion) {

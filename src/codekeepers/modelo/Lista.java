@@ -2,6 +2,7 @@ package codekeepers.modelo;
 import java.util.ArrayList;
 
 public class Lista<T> {
+    protected String nombre;
     protected ArrayList<T> lista;
     public Lista() {
         lista = new ArrayList<>();

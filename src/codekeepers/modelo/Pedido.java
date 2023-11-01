@@ -91,12 +91,11 @@ public class Pedido {
 
         if (minutosTranscurridos <= articulo.getTiempo_preparacion()) {
             // El pedido puede ser eliminado, ya que no ha sido enviado.
-            // Agregar aquí la lógica para eliminar el pedido.
 
             return false;
         } else {
             // El pedido no puede ser eliminado, ya que ha superado el tiempo de preparación para el envío.
-            // Puedes mostrar un mensaje de error o realizar cualquier otra acción necesaria.
+
             return true;
         }
     }
@@ -106,14 +105,14 @@ public class Pedido {
 
         float costoEnvioTotal = this.articulo.getGastoEnvio();
 
-        // Si el cliente no tiene descuento en envíos, simplemente retornamos el costo total.
+        // Si el cliente no tiene descuento en envíos, se retorna el costo total.
         if (cliente instanceof ClienteEstandard) {
             return costoEnvioTotal;
         }
 
         // Si el cliente es premium, aplicamos el descuento del 20%.
         if (cliente instanceof ClientePremium) {
-            float descuento = cliente.descuentoEnv() / 100.0f; // 20% como decimal
+            float descuento = cliente.descuentoEnv() / 100.0f;
             return costoEnvioTotal * (1 - descuento);
         }
         return costoEnvioTotal;

@@ -65,7 +65,7 @@ public class GestionOS {
 
         char pedirOpcion() {
             String resp;
-            System.out.println("Elige una opción (1,2,3 o 0): ");
+            System.out.println("Elige una opción: ");
                     resp = teclado.nextLine();
             if (resp.isEmpty()) {
                 resp = " ";
@@ -146,10 +146,10 @@ public class GestionOS {
                         eliminarPedido();
                         break;
                     case '3':
-                        mostrarListaPedidos();
+                        mostrarPedidosPendientesPorCliente();
                         break;
                     case '4':
-                        // TO-BE-DONE: Lógica para mostrar pedidos enviados con opción de filtrar por cliente
+                        mostrarPedidosEnviadosPorCliente();
                         break;
                     case '0':
                         salir = true;
@@ -176,7 +176,7 @@ public class GestionOS {
             System.out.print("Gasto de Envío: ");
             float gastoEnvio = Float.parseFloat(teclado.nextLine());
 
-            System.out.print("Tiempo de Preparación: ");
+            System.out.print("Tiempo de Preparación en minutos: ");
             int tiempoPreparacion = Integer.parseInt(teclado.nextLine());
 
             Articulo nuevoArticulo = new Articulo(id, nombre, descripcion, precio, gastoEnvio, tiempoPreparacion);
@@ -457,9 +457,69 @@ public class GestionOS {
         } else {
             System.out.println("No se encontró un pedido con el número ingresado.");
         }
+
+
     }
 
+    public void mostrarPedidosPendientesPorCliente() {
+        System.out.println("Mostrar Pedidos Pendientes de Envío por Cliente:");
+        System.out.print("Ingrese el email del cliente para filtrar (deje en blanco para mostrar todos los pedidos pendientes): ");
+        String emailFiltro = teclado.nextLine();
 
+        boolean mensajeImpreso = false;
+
+        for (Pedido pedido : listaPedidos.getArrayList()) {
+
+            if (pedido.pedidoEnviado() == false && (emailFiltro.isEmpty())) {
+                if (!mensajeImpreso) {
+                    System.out.println("Pedidos pendientes de envío:");
+                    mensajeImpreso = true;
+                }
+                System.out.println(pedido);
+            }
+            else if(pedido.pedidoEnviado() == false && pedido.getCliente().getEmail().equalsIgnoreCase(emailFiltro)){
+                if (!mensajeImpreso) {
+                    System.out.println("Pedidos pendientes de envío del cliente: " + pedido.getCliente().getNombre());
+                    mensajeImpreso = true;
+
+                }
+                System.out.println(pedido);
+
+            }
+
+        }
+
+    }
+
+    public void mostrarPedidosEnviadosPorCliente() {
+        System.out.println("Mostrar Pedidos enviados por Cliente:");
+        System.out.print("Ingrese el email del cliente para filtrar (deje en blanco para mostrar todos los pedidos enviados): ");
+        String emailFiltro = teclado.nextLine();
+
+        boolean mensajeImpreso = false;
+
+        for (Pedido pedido : listaPedidos.getArrayList()) {
+
+            if (pedido.pedidoEnviado() == true && (emailFiltro.isEmpty())) {
+                if (!mensajeImpreso) {
+                    System.out.println("Pedidos envíados:");
+                    mensajeImpreso = true;
+                }
+                System.out.println(pedido);
+            }
+            else if(pedido.pedidoEnviado() == true && pedido.getCliente().getEmail().equalsIgnoreCase(emailFiltro)){
+                if (!mensajeImpreso) {
+                    System.out.println("Pedidos enviados del cliente: " + pedido.getCliente().getNombre());
+                    mensajeImpreso = true;
+
+                }
+                System.out.println(pedido);
+
+            }
+
+        }
+
+    }
 
 
     }

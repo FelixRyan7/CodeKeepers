@@ -30,10 +30,10 @@ public class Lista<T> {
     }
     public boolean isEmpty() {
         if (lista.isEmpty()) {
-            System.out.println("La lista está vacía");
+
             return true;
         } else {
-            System.out.println("La lista no está vacía");
+
             return false;
         }
     }

@@ -13,20 +13,23 @@ public class Articulo {
 
     private int tiempoPreparacion;
 
-    public Articulo(String id, String nombre, String descripcion, float precio, float gastoEnvio, int tiempoPreparacion) {
+    private int stock;
+
+    public Articulo(String id, String nombre, String descripcion, float precio, float gastoEnvio, int tiempoPreparacion, int stock) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.gastoEnvio = gastoEnvio;
         this.tiempoPreparacion = tiempoPreparacion;
+        this.stock = stock;
     }
 
-    public String getid() {
+    public String getId() {
         return id;
     }
 
-    public void setid(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -62,12 +65,21 @@ public class Articulo {
         this.gastoEnvio = gasto_envio;
     }
 
-    public int getTiempo_preparacion() {
+    public int getTiempoPreparacion() {
         return tiempoPreparacion;
     }
 
-    public void setTiempo_preparacion(int tiempo_preparacion) {
+    public void setTiempoPreparacion(int tiempo_preparacion) {
         this.tiempoPreparacion = tiempo_preparacion;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public Articulo setStock(int stock) {
+        this.stock = stock;
+        return this;
     }
 
     @Override

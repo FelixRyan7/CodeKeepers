@@ -1,6 +1,6 @@
 package codekeepers.modelo;
 
-public abstract class ClientePremium extends Cliente{
+public class ClientePremium extends Cliente{
 
     public ClientePremium(String email, String nombre, String nif, String domicilio) {
         super(email, nombre, nif, domicilio);

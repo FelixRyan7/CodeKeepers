@@ -1,40 +1,68 @@
 package codekeepers.modelo;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Lista<T> {
-    protected ArrayList<T> lista;
+    protected HashMap<Object, T> lista;
+    private Object lastKey;
+
     public Lista() {
-        lista = new ArrayList<>();
+        lista = new HashMap<Object, T>();
+        lastKey = null;
     }
+
+    public Object getLastKey() {
+        return lastKey;
+    }
+
     public int getSize() {
         return lista.size();
     }
-    public void add(T t) {
-        lista.add(t);
+
+    public void add(Object key, T t) {
+        lista.put(key, t);
+        lastKey = key;
     }
-    public void borrar(T t) {
-        lista.remove(t);
-    }
-    public T getAt(int position) {
-        if (position < 0 || position >= lista.size()) {
-            throw new IndexOutOfBoundsException("Posición fuera de los límites.");
+
+    public void delete(Object key) {
+        if (lista.containsKey(key)) {
+            lista.remove(key);
+        } else {
+            throw new IndexOutOfBoundsException("El elemento no se puede borrar porque la clave no se encuentra en la lista.");
         }
-        return lista.get(position);
     }
+
+    public boolean exists(Object key) {
+        return lista.containsKey(key);
+    }
+
+    public T get(Object key) {
+        if (!lista.containsKey(key)) {
+            throw new IndexOutOfBoundsException("Clave no encontrada en la lista.");
+        }
+        return lista.get(key);
+    }
+
+    public void update(Object key, T item) {
+        if (!lista.containsKey(key)) {
+            throw new IndexOutOfBoundsException("Clave no encontrada en la lista.");
+        }
+        lista.put(key, item);
+    }
+
     public void clear() {
         lista.clear();
+        lastKey = null;
     }
+
     public boolean isEmpty() {
-        if (lista.isEmpty()) {
-            System.out.println("La lista está vacía");
-            return true;
-        } else {
-            System.out.println("La lista no está vacía");
-            return false;
-        }
+        return lista.isEmpty();
     }
-    public ArrayList<T> getArrayList() {
-        ArrayList<T> arrlist = new ArrayList<>(lista);
-        return arrlist;
+
+    public List<T> getList() {
+        return new ArrayList<>(lista.values());
+    }
+
+    public HashMap<Object,T> getItems() {
+        return lista;
     }
 }

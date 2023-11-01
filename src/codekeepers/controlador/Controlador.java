@@ -176,10 +176,15 @@ public class Controlador {
         return pedidoNuevo;
     }
 
-    public void deletePedido(int numeroPedido) {
+    public boolean deletePedido(int numeroPedido) {
         ListaPedidos listaPedidos = datos.getListaPedidos();
+        Pedido pedido = listaPedidos.get(numeroPedido);
+        if(pedido.pedidoEnviado()) {
+            return false;
+        }
         listaPedidos.delete(numeroPedido);
         datos.setListaPedidos(listaPedidos);
+        return true;
     }
 
     public void initData() {

@@ -84,7 +84,7 @@ public class Pedido {
         return diferenciaMinutos >= tiempoPreparacion;
     }
 
-    public float precioEnvio() {
+    public double precioEnvio() {
         float costoEnvioTotal = articulo.getGastoEnvio();
 
         // Si el cliente no tiene descuento en envíos, simplemente retornamos el costo total.
@@ -95,7 +95,8 @@ public class Pedido {
         // Si el cliente es premium, aplicamos el descuento del 20%.
         if (cliente instanceof ClientePremium) {
             float descuento = (cliente.descuentoEnv() * costoEnvioTotal) / 100;
-            return costoEnvioTotal - descuento;
+
+            return Math.round((costoEnvioTotal - descuento)* Math.pow(10, 2)) / Math.pow(10, 2);
         }
         return costoEnvioTotal;
     }

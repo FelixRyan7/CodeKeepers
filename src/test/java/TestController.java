@@ -20,6 +20,7 @@ public class TestController {
         List<ClientePremium> listaClientesPremium = controlador.showClientesPremium();
         assertTrue(listaClientesPremium.contains(leo));
         assertFalse(listaClientesPremium.contains(gin));
+        System.out.print("Test de showClientesPremium superado con exito!");
     }
 
     @Test
@@ -35,7 +36,6 @@ public class TestController {
 
         Articulo nuevoArticulo = controlador.addNewArticulo(nombre, descripcion, precio, gastoEnvio, tiempoPreparacion, stock);
 
-        // Verificaciones
         assertNotNull(nuevoArticulo);
         assertEquals(nombre, nuevoArticulo.getNombre());
         assertEquals(descripcion, nuevoArticulo.getDescripcion());
@@ -43,7 +43,7 @@ public class TestController {
         assertEquals(gastoEnvio, nuevoArticulo.getGastoEnvio(), 0.01);
         assertEquals(tiempoPreparacion, nuevoArticulo.getTiempoPreparacion());
         assertEquals(stock, nuevoArticulo.getStock());
-
+        System.out.print("Test de addNewArticulo superado con exito!");
     }
     public static void main(String[] args) {
 

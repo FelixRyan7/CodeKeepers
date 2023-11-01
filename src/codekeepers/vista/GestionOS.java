@@ -35,6 +35,10 @@ public class GestionOS {
                     this.gestionPedidos();
                     break;
                 case '0':
+                    System.out.println("\n---------------");
+                    System.out.println("Hasta pronto!");
+                    System.out.println("\n");
+
                     salir = true;
                     break;
                 default:

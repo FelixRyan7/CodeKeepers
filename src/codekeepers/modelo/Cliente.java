@@ -53,9 +53,9 @@ public abstract class Cliente {
 
     public abstract String tipoCliente();
 
-    public abstract float calcAnual();
+    public abstract float cuotaAnual();
 
-    public abstract float descuentoEnv();
+    public abstract float descuentoEnvio();
 
     @Override
     public String toString() {

@@ -217,8 +217,8 @@ public class GestionOS {
                 System.out.println("Domicilio: " + cliente.getDomicilio());
                 System.out.println("Tipo de cliente: " + cliente.tipoCliente());
                 if(Objects.equals(cliente.tipoCliente(), "Premium")) {
-                    System.out.println("Cuota anual: " + cliente.calcAnual() + " €");
-                    System.out.println("Descuento de envio: " + cliente.descuentoEnv() + " %");
+                    System.out.println("Cuota anual: " + cliente.cuotaAnual() + " €");
+                    System.out.println("Descuento de envio: " + cliente.descuentoEnvio() + " %");
 
                 }
             }
@@ -258,8 +258,8 @@ public class GestionOS {
                 System.out.println("NIF: " + cliente.getNif());
                 System.out.println("Domicilio: " + cliente.getDomicilio());
                 System.out.println("Tipo de cliente: " + cliente.tipoCliente());
-                System.out.println("Cuota anual: " + cliente.calcAnual() + " €");
-                System.out.println("Descuento de envio: " + cliente.descuentoEnv() + " %");
+                System.out.println("Cuota anual: " + cliente.cuotaAnual() + " €");
+                System.out.println("Descuento de envio: " + cliente.descuentoEnvio() + " %");
             }
             System.out.println("\n");
         }

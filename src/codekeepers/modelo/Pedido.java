@@ -94,7 +94,7 @@ public class Pedido {
 
         // Si el cliente es premium, aplicamos el descuento del 20%.
         if (cliente instanceof ClientePremium) {
-            float descuento = (cliente.descuentoEnv() * costoEnvioTotal) / 100;
+            float descuento = (cliente.descuentoEnvio() * costoEnvioTotal) / 100;
 
             return Math.round((costoEnvioTotal - descuento)* Math.pow(10, 2)) / Math.pow(10, 2);
         }

@@ -13,12 +13,12 @@ public class ClientePremium extends Cliente{
     }
 
     @Override
-    public float calcAnual() {
+    public float cuotaAnual() {
         return 30.0f;
     }
 
     @Override
-    public float descuentoEnv() {
+    public float descuentoEnvio() {
         return 20.0f;
     }
 
@@ -26,8 +26,8 @@ public class ClientePremium extends Cliente{
     public String toString() {
         return "Tipo de Cliente: " + tipoCliente() + "\n" +
                 super.toString() +
-                "Cuota anual: " + calcAnual() + "\n" +
-                "Descuento de envio: " + descuentoEnv() + "\n"
+                "Cuota anual: " + cuotaAnual() + "\n" +
+                "Descuento de envio: " + descuentoEnvio() + "\n"
                 ;
     }
 }

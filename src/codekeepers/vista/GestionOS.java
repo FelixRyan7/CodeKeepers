@@ -1,17 +1,29 @@
 package codekeepers.vista;
-import codekeepers.controlador.Controlador;
+import codekeepers.controlador.*;
 import codekeepers.modelo.*;
+
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class GestionOS {
+
+    ArticuloDAO articuloDAO = new ArticuloDAO();
+    ControladorArticulo controladorArticulo = new ControladorArticulo(articuloDAO);
+
+
+
+
     private Controlador controlador;
     Scanner teclado = new Scanner(System.in);
     public GestionOS() {
         controlador = new Controlador();
+
     }
+
+
+
     public void inicio() {
         boolean salir = false;
         char opcio;
@@ -56,6 +68,8 @@ public class GestionOS {
         return resp.charAt(0);
     }
 
+
+    //-----------------------------AQUI COMIENZA LA GESTION DE ARTICULOS--------------------------------------
     public void gestionArticulos() {
         boolean salir = false;
         char opcion;
@@ -81,95 +95,104 @@ public class GestionOS {
     }
     public void listarArticulos() {
         System.out.println("\n\n---- LISTA DE ARTICULOS ----\n");
-        List<Articulo> allArticulos = controlador.showAllArticulos();
 
-        if(allArticulos.isEmpty()) {
-            System.out.println("No hay articulos en la lista\n");
+        // Utilizar el controlador para obtener la lista de artículos desde la base de datos
+        List<Articulo> articulos = controladorArticulo.showAllArticulos();
+
+        if (articulos.isEmpty()) {
+            System.out.println("No hay artículos en la lista\n");
         } else {
-            for (Articulo articulo : allArticulos) {
-                System.out.println("\n---- Nº"+ articulo.getId() + " ----");
+            for (Articulo articulo : articulos) {
+                System.out.println("\n---- Nº" + articulo.getId() + " ----");
                 System.out.println("Nombre: " + articulo.getNombre());
                 System.out.println("Descripción:" + articulo.getDescripcion());
                 System.out.println("Precio: " + articulo.getPrecio() + " €");
-                System.out.println("Gastos de envio: " + articulo.getGastoEnvio() + " €");
+                System.out.println("Gastos de envío: " + articulo.getGastoEnvio() + " €");
                 System.out.println("Tiempo de preparación: " + articulo.getTiempoPreparacion() + " minuto/s");
                 System.out.println("Stock disponible: " + articulo.getStock() + " unidad/es");
             }
             System.out.println("\n");
-
         }
     }
 
     public void addArticulo() {
-        System.out.println("\n\n---- AÑADIR NUEVO ARTICULO ----\n");
+        System.out.println("\n\n---- AÑADIR NUEVO ARTÍCULO ----\n");
         System.out.println("Nombre: ");
-        String nombre = teclado.nextLine();
-        System.out.println("\n");
-        while (nombre.isEmpty()) {
-            if(volverAlMenu(nombre)) return;
-            System.out.println("Por favor, introduzca un nombre valido: ");
-            nombre = teclado.nextLine();
-            System.out.println("\n");
-        }
+        String nombre = leerInputNoVacio();
         System.out.println("Descripción: ");
-        String descripcion = teclado.nextLine();
-        System.out.println("\n");
-        while (descripcion.isEmpty()) {
-            if(volverAlMenu(descripcion)) return;
-            System.out.println("Por favor, introduzca una descripcion valido: ");
-            descripcion = teclado.nextLine();
-            System.out.println("\n");
-        }
+        String descripcion = leerInputNoVacio();
         System.out.println("Precio: ");
-        String precio = teclado.nextLine().replace(',', '.');
-        System.out.println("\n");
-        while (precio.isEmpty() || !isValidFloat(precio)) {
-            if(volverAlMenu(precio)) return;
-            System.out.println("Por favor, introduzca un precio valido: ");
-            precio = teclado.nextLine();
-            System.out.println("\n");
-        }
-        System.out.println("Gastos de envio: ");
-        String gastosEnvio = teclado.nextLine().replace(',', '.');
-        System.out.println("\n");
-        while (gastosEnvio.isEmpty() || !isValidFloat(gastosEnvio)) {
-            if(volverAlMenu(gastosEnvio)) return;
-            System.out.println("Por favor, introduzca un gasto de envío valido: ");
-            gastosEnvio = teclado.nextLine();
-            System.out.println("\n");
-        }
+        float precio = leerFloatValido();
+        System.out.println("Gastos de envío: ");
+        float gastosEnvio = leerFloatValido();
         System.out.println("Tiempo de preparación: ");
-        String tiempoPreparacion = teclado.nextLine();
-        System.out.println("\n");
-        while (tiempoPreparacion.isEmpty() || !isValidInt(tiempoPreparacion)) {
-            if(volverAlMenu(tiempoPreparacion)) return;
-            System.out.println("Por favor, introduzca un tiempo de preparación valido: ");
-            tiempoPreparacion = teclado.nextLine();
-            System.out.println("\n");
-        }
+        int tiempoPreparacion = leerIntValido();
         System.out.println("Stock: ");
-        String stock = teclado.nextLine();
-        System.out.println("\n");
-        while (stock.isEmpty() || !isValidInt(stock)) {
-            if(volverAlMenu(stock)) return;
-            System.out.println("Por favor, introduzca un stock valido: ");
-            stock = teclado.nextLine();
-            System.out.println("\n");
-        }
+        int stock = leerIntValido();
 
-        controlador.addNewArticulo(
+        // Llamamos al método del controlador para agregar el nuevo artículo a la base de datos
+        Articulo nuevoArticulo = controladorArticulo.addNewArticulo(
                 nombre,
                 descripcion,
-                Float.parseFloat(precio),
-                Float.parseFloat(gastosEnvio),
-                Integer.parseInt(tiempoPreparacion),
-                Integer.parseInt(stock)
+                precio,
+                gastosEnvio,
+                tiempoPreparacion,
+                stock
         );
 
-        System.out.println("\nArticulo añadido correctamente!\n --------------\n");
-
+        System.out.println("\nArtículo añadido correctamente!");
+        // Puedes imprimir más información sobre el nuevo artículo si lo deseas
     }
 
+    private String leerInputNoVacio() {
+        String input = teclado.nextLine();
+        while (input.isEmpty()) {
+            if (volverAlMenu(input)) return "";
+            System.out.println("Por favor, introduzca un valor válido: ");
+            input = teclado.nextLine();
+        }
+        return input;
+    }
+
+    private float leerFloatValido() {
+        String input = teclado.nextLine().replace(',', '.');
+        while (input.isEmpty() || !isValidFloat(input)) {
+            if (volverAlMenu(input)) return 0.0f;
+            System.out.println("Por favor, introduzca un valor válido: ");
+            input = teclado.nextLine();
+        }
+        return Float.parseFloat(input);
+    }
+
+    private int leerIntValido() {
+        String input = teclado.nextLine();
+        while (input.isEmpty() || !isValidInt(input)) {
+            if (volverAlMenu(input)) return 0;
+            System.out.println("Por favor, introduzca un valor válido: ");
+            input = teclado.nextLine();
+        }
+        return Integer.parseInt(input);
+    }
+
+    private boolean isValidFloat(String input) {
+        try {
+            Float.parseFloat(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isValidInt(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    //--------------------------------------AQUI COMIENZA LA GESTION DE CLIENTES----------------------------------------------------------
     public void gestionClientes() {
         boolean salir = false;
         char opcion;
@@ -509,23 +532,7 @@ public class GestionOS {
 
     }
 
-    private static boolean isValidFloat(String s) {
-        try {
-            Float.parseFloat(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
 
-    private static boolean isValidInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
 
     private void printPedido(Pedido pedido) {
         System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");

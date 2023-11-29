@@ -16,7 +16,7 @@ public class Controlador {
     private Datos datos;
     public Controlador() {
         datos = new Datos ();
-        this.initData();
+
     }
 
     public List<Articulo> showAllArticulos() {
@@ -46,11 +46,11 @@ public class Controlador {
         return articuloNuevo;
     }
 
-    public Cliente addCliente(String email, String nombre, String nif, String domicilio, boolean esPremium) {
+    public Cliente addCliente(String id, String email, String nombre, String nif, String domicilio, boolean esPremium) {
         ListaClientes listaClientes = datos.getListaClientes();
         Cliente clienteNuevo = esPremium ?
-                new ClientePremium(email, nombre, nif, domicilio) :
-                new ClienteEstandard(email, nombre, nif, domicilio);
+                new ClientePremium(id, nombre, nif, domicilio,email) :
+                new ClienteEstandard(id, nombre, nif, domicilio, email);
         listaClientes.add(email, clienteNuevo);
         datos.setListaClientes(listaClientes);
         return clienteNuevo;
@@ -153,31 +153,7 @@ public class Controlador {
         return pedidosEnviados;
     }
 
-    public Pedido addPedido(String emailCliente, int numeroArticulo, int cantidad) {
-        ListaPedidos listaPedidos = datos.getListaPedidos();
-        ListaArticulos listaArticulos = datos.getListaArticulos();
-        Cliente cliente = datos.getListaClientes().get(emailCliente);
-        Articulo articulo = datos.getListaArticulos().get(numeroArticulo);
-        Object id = listaPedidos.getLastKey();
-        if(id == null) {
-            id = 1;
-        } else {
-            id = Integer.parseInt(id.toString()) + 1 ;
-        }
-        float precioTodosArticulos = articulo.getPrecio() * cantidad;
-        Pedido pedidoNuevo = new Pedido(
-                Integer.parseInt(id.toString()),
-                cliente,
-                articulo,
-                cantidad,
-                precioTodosArticulos
-        );
-        listaPedidos.add(id, pedidoNuevo);
-        datos.setListaPedidos(listaPedidos);
-        listaArticulos.update(numeroArticulo, articulo.setStock(articulo.getStock() - cantidad));
-        datos.setListaArticulos(listaArticulos);
-        return pedidoNuevo;
-    }
+
 
     public boolean deletePedido(int numeroPedido) {
         ListaPedidos listaPedidos = datos.getListaPedidos();
@@ -190,18 +166,6 @@ public class Controlador {
         return true;
     }
 
-    public void initData() {
-        Cliente cliente1 = addCliente("luffy@mail.com", "Luffy", "222222222P", "C/ Rubi 22", true);
-        Cliente cliente2 = addCliente("zoro@mail.com", "Zoro", "333333333K", "C/ Diamant 22", false);
-        Cliente cliente3 = addCliente("robin@mail.com", "Robin", "444444444M", "C/ Or 22", true);
-        Articulo articulo1 = addNewArticulo("Mesa", "Mesa de mandera", 22.89f, 3.55f, 1, 100);
-        Articulo articulo2 = addNewArticulo("Silla", "Silla de mandera", 16.89f, 3.35f, 10, 400);
-        Articulo articulo3 = addNewArticulo("Estanteria", "Estanteria de mandera", 12.89f, 2.75f, 5, 300);
-        addPedido("luffy@mail.com", 1, 10);
-        addPedido("luffy@mail.com", 2, 40);
-        addPedido("luffy@mail.com", 3, 4);
-        addPedido("robin@mail.com", 1, 40);
-        addPedido("robin@mail.com", 2, 12);
-        addPedido("zoro@mail.com", 3, 10);
-    }
+
+
 }

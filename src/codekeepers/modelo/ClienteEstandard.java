@@ -2,13 +2,13 @@ package codekeepers.modelo;
 
 public class ClienteEstandard extends Cliente{
 
-    public ClienteEstandard(String email, String nombre, String nif, String domicilio) {
-        super(email, nombre, nif, domicilio);
+    public ClienteEstandard(String id, String nombre, String nif, String domicilio, String email) {
+        super(id, nombre, nif, domicilio, email);
     }
 
     @Override
     public String tipoCliente() {
-        return "Estandard";
+        return "Estandar";
     }
 
     @Override
@@ -27,8 +27,8 @@ public class ClienteEstandard extends Cliente{
     public String toString() {
         return "Tipo de Cliente: " + tipoCliente() + "\n" +
                 super.toString() +
-                "Cuota anual: " + cuotaAnual() + "\n" +
-                "Descuento de envio: " + descuentoEnvio() + "\n"
+                "\nCuota anual: " + cuotaAnual() + "€\n" +
+                "Descuento de envio: " + descuentoEnvio() + "%\n"
                 ;
     }
 }

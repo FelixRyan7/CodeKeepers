@@ -88,9 +88,9 @@ public class Articulo {
                 "id='" + id + '\'' +
                 ", nombre='" + nombre + '\'' +
                 ", descripcion='" + descripcion + '\'' +
-                ", precio=" + precio +
-                ", gasto_envio=" + gastoEnvio +
-                ", tiempo_preparacion=" + tiempoPreparacion +
+                ", precio=" + precio + "€" +
+                ", gasto_envio=" + gastoEnvio + "€" +
+                ", tiempo_preparacion -> " + tiempoPreparacion + " minutos" +
                 '}';
     }
 }

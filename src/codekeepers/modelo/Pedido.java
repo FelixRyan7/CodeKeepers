@@ -7,7 +7,7 @@ import java.util.List;
 public class Pedido {
 
 
-    private int numPedido;
+    private String id;
 
     private Cliente cliente;
 
@@ -20,21 +20,22 @@ public class Pedido {
     private float precioPedido;
 
 
-    public Pedido(int numPedido, Cliente cliente, Articulo articulo, int cantidadArticulo, float precioPedido) {
-        this.numPedido = numPedido;
+
+    public Pedido(String id, Cliente cliente, Articulo articulo, int cantidadArticulo, float precioPedido, LocalDateTime fechaHora) {
+        this.id = id;
         this.cliente = cliente;
         this.articulo = articulo;
         this.cantidadArticulo = cantidadArticulo;
         this.precioPedido = precioPedido;
-        this.fechaHora = LocalDateTime.now();
+        this.fechaHora = fechaHora;
     }
 
-    public int getNumPedido() {
-        return numPedido;
+    public String getId() {
+        return id;
     }
 
-    public void setNumPedido(int numPedido) {
-        this.numPedido = numPedido;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Cliente getCliente() {
@@ -104,7 +105,7 @@ public class Pedido {
         @Override
         public String toString() {
             return "Pedido{" +
-                    "num_pedido=" + numPedido +
+                    "id=" + id +
                     ", fecha_hora=" + fechaHora +
                     ", cliente=" + cliente.getNif() + cliente.getNombre() +
                     ", articulo=" + articulo.getId() + articulo.getDescripcion() +

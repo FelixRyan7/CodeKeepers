@@ -13,6 +13,12 @@ public class GestionOS {
     ControladorArticulo controladorArticulo = new ControladorArticulo(articuloDAO);
 
 
+    ClienteDAO clienteDAO = new ClienteDAO();
+    ControladorCliente controladorCliente = new ControladorCliente(clienteDAO);
+
+    PedidoDAO pedidoDAO = new PedidoDAO();
+    ControladorPedido controladorPedido = new ControladorPedido(pedidoDAO, clienteDAO, articuloDAO);
+
 
 
     private Controlador controlador;
@@ -227,7 +233,7 @@ public class GestionOS {
 
     public void listarClientes() {
         System.out.println("\n\n---- LISTA DE CLIENTES ----\n");
-        List<Cliente> allClientes = controlador.showAllClientes();
+        List<Cliente> allClientes = controladorCliente.showAllClientes();
 
         if(allClientes.isEmpty()) {
             System.out.println("No hay clientes en la lista\n");
@@ -235,13 +241,16 @@ public class GestionOS {
             for (Cliente cliente : allClientes) {
                 System.out.println("\n-----------");
                 System.out.println("Nombre: " + cliente.getNombre());
-                System.out.println("Correo electronico:" + cliente.getEmail());
                 System.out.println("NIF: " + cliente.getNif());
                 System.out.println("Domicilio: " + cliente.getDomicilio());
-                System.out.println("Tipo de cliente: " + cliente.tipoCliente());
-                if(Objects.equals(cliente.tipoCliente(), "Premium")) {
-                    System.out.println("Cuota anual: " + cliente.cuotaAnual() + " €");
-                    System.out.println("Descuento de envio: " + cliente.descuentoEnvio() + " %");
+                System.out.println("email: " + cliente.getEmail());
+
+                if (cliente instanceof ClientePremium) {
+                    System.out.println("Tipo de cliente: Premium");
+                    System.out.println("Cuota anual: " + ((ClientePremium) cliente).cuotaAnual() + " €");
+                    System.out.println("Descuento de envío: " + ((ClientePremium) cliente).descuentoEnvio() + " %");
+                } else if (cliente instanceof ClienteEstandard) {
+                    System.out.println("Tipo de cliente: Estándar");
 
                 }
             }
@@ -251,7 +260,7 @@ public class GestionOS {
 
     public void listarClientesEstandar() {
         System.out.println("\n\n---- LISTA DE CLIENTES ESTANDAR ----\n");
-        List<ClienteEstandard> clienteEstandards = controlador.showClientesEstandar();
+        List<Cliente> clienteEstandards = controladorCliente.showClientesEstandar();
 
         if(clienteEstandards.isEmpty()) {
             System.out.println("No hay clientes estandar en la lista\n");
@@ -269,7 +278,7 @@ public class GestionOS {
 
     public void listarClientesPremium() {
         System.out.println("\n\n---- LISTA DE CLIENTES PREMIUM ----\n");
-        List<ClientePremium> clientePremiums = controlador.showClientesPremium();
+        List<Cliente> clientePremiums = controladorCliente.showClientesPremium();
 
         if(clientePremiums.isEmpty()) {
             System.out.println("No hay clientes premium en la lista\n");
@@ -295,16 +304,16 @@ public class GestionOS {
         System.out.println("\n");
         while (nombre.isEmpty()) {
             if(volverAlMenu(nombre)) return;
-            System.out.println("Por favor, introduzca un nombre valido: ");
+            System.out.println("Por favor, introduzca un nombre válido: ");
             nombre = teclado.nextLine();
             System.out.println("\n");
         }
-        System.out.println("Correo electronico: ");
+        System.out.println("Correo electrónico: ");
         String email = teclado.nextLine();
         System.out.println("\n");
         while (email.isEmpty()) {
             if(volverAlMenu(email)) return;
-            System.out.println("Por favor, introduzca un correo electronico valido: ");
+            System.out.println("Por favor, introduzca un correo electrónico válido: ");
             email = teclado.nextLine();
             System.out.println("\n");
         }
@@ -313,7 +322,7 @@ public class GestionOS {
         System.out.println("\n");
         while (nif.isEmpty()) {
             if(volverAlMenu(nif)) return;
-            System.out.println("Por favor, introduzca un NIF valido: ");
+            System.out.println("Por favor, introduzca un NIF válido: ");
             nif = teclado.nextLine();
             System.out.println("\n");
         }
@@ -322,26 +331,29 @@ public class GestionOS {
         System.out.println("\n");
         while (domicilio.isEmpty()) {
             if(volverAlMenu(domicilio)) return;
-            System.out.println("Por favor, introduzca un domicilio valido: ");
+            System.out.println("Por favor, introduzca un domicilio válido: ");
             domicilio = teclado.nextLine();
             System.out.println("\n");
         }
 
-        System.out.println("Este será un cliente (1) Premium o (2) Estandar?");
-        System.out.println("Elija una opción: 1,2 o 0");
-        String  tipoCliente = teclado.nextLine();
+        System.out.println("Este será un cliente (1) Premium o (2) Estándar?");
+        System.out.println("Elija una opción: 1, 2 o 0");
+        String tipoCliente = teclado.nextLine();
         System.out.println("\n");
         while (tipoCliente.isEmpty() || (!tipoCliente.equals("1") && !tipoCliente.equals("2"))) {
             if(volverAlMenu(tipoCliente)) return;
-            System.out.println("Por favor, introduzca una opción válido: ");
+            System.out.println("Por favor, introduzca una opción válida: ");
             tipoCliente = teclado.nextLine();
             System.out.println("\n");
         }
 
-        Cliente cliente = controlador.addCliente(email, nombre, nif, domicilio, tipoCliente.equals("1"));
+        // Llama al método addNewCliente del controlador para insertar el nuevo cliente en la base de datos
+        controladorCliente.addNewCliente(nombre, nif, domicilio, tipoCliente.equals("1"), email);
         System.out.println("\nCliente añadido correctamente!\n --------------\n");
     }
 
+
+    //--------------------------------------AQUI COMIENZA LA GESTION DE PEDIDOS----------------------------------------------------------
     public void gestionPedidos() {
         boolean salir = false;
         char opcion;
@@ -384,9 +396,9 @@ public class GestionOS {
 
     public void listarPedidosPendientes() {
         System.out.println("\n\n---- LISTA DE PEDIDOS PENDIENTES ----\n");
-        List<Pedido> pedidosPendientes = controlador.showPedidosPendientes();
+        List<Pedido> pedidosPendientes = controladorPedido.showPedidosPendientesEnvio();
 
-        if(pedidosPendientes.isEmpty()) {
+        if (pedidosPendientes.isEmpty()) {
             System.out.println("No hay pedidos pendientes en la lista\n");
         } else {
             for (Pedido pedido : pedidosPendientes) {
@@ -396,21 +408,23 @@ public class GestionOS {
         }
     }
     public void listarPedidosPendientesCliente() {
-        System.out.println("\n\n---- LISTA DE PEDIDOS PENDIENTES POR CLIENTE ----\n");
+        System.out.println("\n\n---- LISTA DE PEDIDOS PENDIENTES ----\n");
         listarClientes();
-        System.out.println("Correo electronico del cliente: ");
-        String cliente = teclado.nextLine();
+        System.out.println("Correo electrónico del cliente: ");
+        String emailCliente = teclado.nextLine().trim();
         System.out.println("\n");
-        while (cliente.isEmpty()) {
-            if(volverAlMenu(cliente)) return;
-            System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
-            cliente = teclado.nextLine();
+
+        while (emailCliente.isEmpty()) {
+            if (volverAlMenu(emailCliente)) return;
+            System.out.println("Por favor, introduzca un correo electrónico de cliente válido: ");
+            emailCliente = teclado.nextLine().trim();
             System.out.println("\n");
         }
-        List<Pedido> pedidosPendientes = controlador.showPedidosPendientesCliente(cliente);
 
-        if(pedidosPendientes.isEmpty()) {
-            System.out.println("No hay pedidos pendientes de este cliente en la lista\n");
+        List<Pedido> pedidosPendientes = controladorPedido.showPedidosPendientesPorCliente(emailCliente);
+
+        if (pedidosPendientes.isEmpty()) {
+            System.out.println("No hay pedidos pendientes de envío para este cliente en la lista\n");
         } else {
             for (Pedido pedido : pedidosPendientes) {
                 printPedido(pedido);
@@ -420,12 +434,12 @@ public class GestionOS {
     }
     public void listarPedidosEnviados() {
         System.out.println("\n\n---- LISTA DE PEDIDOS ENVIADOS ----\n");
-        List<Pedido> pedidosPendientes = controlador.showPedidosEnviados();
+        List<Pedido> pedidosEnviados = controladorPedido.showPedidosEnviados();
 
-        if(pedidosPendientes.isEmpty()) {
+        if (pedidosEnviados.isEmpty()) {
             System.out.println("No hay pedidos enviados en la lista\n");
         } else {
-            for (Pedido pedido : pedidosPendientes) {
+            for (Pedido pedido : pedidosEnviados) {
                 printPedido(pedido);
             }
             System.out.println("\n");
@@ -435,21 +449,23 @@ public class GestionOS {
     public void listarPedidosEnviadosCliente() {
         System.out.println("\n\n---- LISTA DE PEDIDOS ENVIADOS POR CLIENTE ----\n");
         listarClientes();
-        System.out.println("Correo electronico del cliente: ");
-        String cliente = teclado.nextLine();
+        System.out.println("Correo electrónico del cliente: ");
+        String emailCliente = teclado.nextLine().trim();
         System.out.println("\n");
-        while (cliente.isEmpty()) {
-            if(volverAlMenu(cliente)) return;
-            System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
-            cliente = teclado.nextLine();
+
+        while (emailCliente.isEmpty()) {
+            if (volverAlMenu(emailCliente)) return;
+            System.out.println("Por favor, introduzca un correo electrónico de cliente válido: ");
+            emailCliente = teclado.nextLine().trim();
             System.out.println("\n");
         }
 
-        List<Pedido> pedidosPendientes = controlador.showPedidosEnviadosCliente(cliente);
-        if(pedidosPendientes.isEmpty()) {
-            System.out.println("No hay pedidos enviador de este cliente en la lista\n");
+        List<Pedido> pedidosEnviados = controladorPedido.showPedidosEnviadosPorCliente(emailCliente);
+
+        if (pedidosEnviados.isEmpty()) {
+            System.out.println("No hay pedidos enviados de este cliente en la lista\n");
         } else {
-            for (Pedido pedido : pedidosPendientes) {
+            for (Pedido pedido : pedidosEnviados) {
                 printPedido(pedido);
             }
             System.out.println("\n");
@@ -462,14 +478,16 @@ public class GestionOS {
         System.out.println("Elija una opción: 1, 2 o 0");
         String esCliente = teclado.nextLine();
         System.out.println("\n");
+
         while (esCliente.isEmpty() || (!esCliente.equals("1") && !esCliente.equals("2"))) {
             if(volverAlMenu(esCliente)) return;
             System.out.println("Por favor, introduzca una opción válida: ");
             esCliente = teclado.nextLine();
             System.out.println("\n");
         }
+
         String cliente;
-        if(esCliente.equals("2")) {
+        if (esCliente.equals("2")) {
             this.addCliente();
         }
 
@@ -477,6 +495,7 @@ public class GestionOS {
         System.out.println("Correo electronico del cliente: ");
         cliente = teclado.nextLine();
         System.out.println("\n");
+
         while (cliente.isEmpty()) {
             System.out.println("Por favor, introduzca un correo electronico de cliente valido: ");
             cliente = teclado.nextLine();
@@ -487,15 +506,18 @@ public class GestionOS {
         System.out.println("Numero del articulo: ");
         String articulo = teclado.nextLine();
         System.out.println("\n");
+
         while (articulo.isEmpty()) {
             if(volverAlMenu(cliente)) return;
             System.out.println("Por favor, introduzca un numero de articulo valido: ");
             articulo = teclado.nextLine();
             System.out.println("\n");
         }
+
         System.out.println("Cantidad: ");
         String cantidad = teclado.nextLine();
         System.out.println("\n");
+
         while (cantidad.isEmpty()) {
             if(volverAlMenu(cliente)) return;
             System.out.println("Por favor, introduzca una cantidad valida: ");
@@ -503,9 +525,10 @@ public class GestionOS {
             System.out.println("\n");
         }
 
-        Pedido nuevoPedido = controlador.addPedido(cliente, Integer.parseInt(articulo), Integer.parseInt(cantidad));
-        System.out.println("\nPedido creado correctamente!\n"+ nuevoPedido.toString() +"--------------\n");
+        controladorPedido.addNewPedido(articulo, cliente, Integer.parseInt(cantidad));
+        System.out.println("\nPedido creado correctamente!\n" + "--------------\n");
     }
+
 
     public void anularPedido() {
         System.out.println("\n---- ANULAR PEDIDO ----\n");
@@ -515,33 +538,33 @@ public class GestionOS {
         System.out.println("Introduzca el numero de pedido que desea cancelar: ");
         String pedido = teclado.nextLine();
         System.out.println("\n");
+
         while (pedido.isEmpty() || !isValidInt(pedido)) {
-            if(volverAlMenu(pedido)) return;
+            if (volverAlMenu(pedido)) return;
             System.out.println("Por favor, introduzca un numero de pedido valido: ");
             pedido = teclado.nextLine();
             System.out.println("\n");
         }
 
-        boolean respuesta = controlador.deletePedido(Integer.parseInt(pedido));
+        boolean respuesta = controladorPedido.eliminarPedido(Integer.parseInt(pedido));
 
         System.out.println(respuesta ?
                 "\n\nEl pedido se ha anulado correctamente.\n" :
                 "\nLo sentimos, el pedido ya está enviado y no se puede anular."
         );
         System.out.println("--------------\n");
-
     }
 
 
 
     private void printPedido(Pedido pedido) {
-        System.out.println("\n---- Nº"+ pedido.getNumPedido() + " ----");
-        System.out.println("Cliente: " + pedido.getCliente().toString());
-        System.out.println("Articulo:" + pedido.getArticulo().toString());
-        System.out.println("Cantidad: " + pedido.getCantidadArticulo());
-        System.out.println("Precio de articulos: " + pedido.getPrecioPedido());
-        System.out.println("Gastos de envio: " + pedido.precioEnvio());
-        System.out.println("Precio total: " + (pedido.precioEnvio() + pedido.getPrecioPedido()));
+        System.out.println("\n---- Nº"+ pedido.getId() + " ----");
+        System.out.println(pedido.getCliente().toString());
+        System.out.println(pedido.getArticulo().toString());
+        System.out.println("Cantidad: " + pedido.getCantidadArticulo() + " ud");
+        System.out.println("Precio de articulos: " + pedido.getPrecioPedido() + "€");
+        System.out.println("Gastos de envio: " + pedido.precioEnvio() + "€");
+        System.out.println("Precio total: " + (pedido.precioEnvio() + pedido.getPrecioPedido()) + "€");
         System.out.println("Fecha y hora: " + pedido.getFechaHora());
     }
 

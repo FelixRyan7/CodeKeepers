@@ -2,6 +2,7 @@ package codekeepers.modelo;
 
 public abstract class Cliente {
 
+    private String id;
     private String email;
 
     private String nombre;
@@ -11,14 +12,22 @@ public abstract class Cliente {
     private String domicilio;
 
 
-    public Cliente(String email, String nombre, String nif, String domicilio) {
-        this.email = email;
+    public Cliente(String id, String nombre, String nif, String domicilio, String email) {
+        this.id = id;
         this.nombre = nombre;
         this.nif = nif;
         this.domicilio = domicilio;
+        this.email = email;
 
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getEmail() {
         return email;
     }
@@ -59,12 +68,14 @@ public abstract class Cliente {
 
     @Override
     public String toString() {
-        return "Cliente{" +
-                "email='" + email + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", nif='" + nif + '\'' +
-                ", domicilio='" + domicilio + '\'' +
+        return "Cliente {" +
+                "Email='" + email + '\'' +
+                ", Nombre='" + nombre + '\'' +
+                ", Nif='" + nif + '\'' +
+                ", Domicilio='" + domicilio + '\'' +
 
                 '}';
     }
+
+
 }

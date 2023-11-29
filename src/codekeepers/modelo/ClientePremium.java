@@ -2,8 +2,8 @@ package codekeepers.modelo;
 
 public class ClientePremium extends Cliente{
 
-    public ClientePremium(String email, String nombre, String nif, String domicilio) {
-        super(email, nombre, nif, domicilio);
+    public ClientePremium(String id, String nombre, String nif, String domicilio, String email) {
+        super(id, nombre, nif, domicilio, email);
     }
 
 
@@ -26,8 +26,8 @@ public class ClientePremium extends Cliente{
     public String toString() {
         return "Tipo de Cliente: " + tipoCliente() + "\n" +
                 super.toString() +
-                "Cuota anual: " + cuotaAnual() + "\n" +
-                "Descuento de envio: " + descuentoEnvio() + "\n"
+                "\nCuota anual: " + cuotaAnual() + "€\n" +
+                "Descuento de envio: " + descuentoEnvio() + "%\n"
                 ;
     }
 }

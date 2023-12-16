@@ -5,6 +5,7 @@ use codekeepers;
 CREATE TABLE IF NOT EXISTS articulo (
   id_articulo int NOT NULL AUTO_INCREMENT,
   nombre varchar(40) NOT NULL,
+  descripcion varchar(255) NOT NULL,
   precio float NOT NULL,
   gasto_envio float NOT NULL,
   tiempo_preparacion int NOT NULL,
@@ -28,17 +29,18 @@ CREATE TABLE IF NOT EXISTS pedido (
   id_cliente int NOT NULL,
   cantidad int NOT NULL,
   precio float NOT NULL,
+  fecha_hora_pedido datetime NOT NULL,
   PRIMARY KEY (id_pedido),
   FOREIGN KEY (id_articulo) REFERENCES articulo (id_articulo),
   FOREIGN KEY (id_cliente) REFERENCES cliente (id_cliente)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO articulo (nombre, precio, gasto_envio, tiempo_preparacion, stock) VALUES
-('Articulo1', 19.99, 3.50, 30, 100),
-('Articulo2', 29.99, 5.00, 25, 50),
-('Articulo3', 14.99, 2.00, 20, 75),
-('Articulo4', 39.99, 4.50, 35, 120),
-('Articulo5', 24.99, 3.00, 28, 80);
+INSERT INTO articulo (nombre, descripcion, precio, gasto_envio, tiempo_preparacion, stock) VALUES
+('Articulo1', 'Descripción articulo 1', 19.99, 3.50, 30, 100),
+('Articulo2', 'Descripción articulo 2', 29.99, 5.00, 25, 50),
+('Articulo3', 'Descripción articulo 3', 14.99, 2.00, 20, 75),
+('Articulo4', 'Descripción articulo 4', 39.99, 4.50, 35, 120),
+('Articulo5', 'Descripción articulo 5', 24.99, 3.00, 28, 80);
 
 INSERT INTO cliente (nombre, nif, domicilio, email, tipo) VALUES
 ('Cliente1', '12345678A', 'Calle 123, Ciudad', 'cliente1@example.com', 'Premium'),
@@ -47,9 +49,9 @@ INSERT INTO cliente (nombre, nif, domicilio, email, tipo) VALUES
 ('Cliente4', '23456789D', 'Carrera 789, Poblado', 'cliente4@example.com', 'Estandar'),
 ('Cliente5', '90123456E', 'Camino 987, Aldea', 'cliente5@example.com', 'Premium');
 
-INSERT INTO pedido (id_articulo, id_cliente, cantidad, precio) VALUES
-(1, 1, 2, 39.98),
-(2, 3, 1, 29.99),
-(3, 2, 3, 44.97),
-(4, 5, 1, 39.99),
-(5, 4, 2, 49.98);
+INSERT INTO pedido (id_articulo, id_cliente, cantidad, precio, fecha_hora_pedido) VALUES
+(1, 1, 2, 39.98, NOW()),
+(2, 3, 1, 29.99, NOW()),
+(3, 2, 3, 44.97, NOW()),
+(4, 5, 1, 39.99, NOW()),
+(5, 4, 2, 49.98, NOW());
